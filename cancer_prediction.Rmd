@@ -5,6 +5,13 @@ date: "10/21/2020"
 output: word_document
 ---
 
+# Introduction
+The goal of our work is to use data on tissue samples taken from cancerous breast tissue to create a logistic regression model that can be used to accurately predict if a cancer sample is malignant or benign.  Our approach is to first analyze different predictor variables to check for extreme values that could influence our models accuracy.  To do this we will plot predictor variables and look for outliers that could skew the variable.  If need be we can then transform variables using such transformations as square roots, logarithms, and reciprocals.  We will also look at the predictor variables to determine if any are highly correlated.  If so, we will be able to reduce the number of predictor variables to account for overfitting our regression model.  Once we have checked our predictor variables, and transformed those where we felt necessary,  We then intend to build models and test their predictive capabilities.
+
+# Exploring and Transforming the Data
+```{r}
+breastcancer <- read.csv("breastcancer.csv")
+
 breastcancer$diagnosis = factor(breastcancer$diagnosis)
 
 radius_plot = plot(breastcancer$radius_mean, breastcancer$diagnosis)
@@ -13,3 +20,6 @@ area_plot = plot(breastcancer$area_mean, breastcancer$diagnosis)
 smooth_plot = plot(breastcancer$smoothness_mean, breastcancer$diagnosis)
 permieter_plot = plot(breastcancer$perimeter_mean, breastcancer$diagnosis)
 compact_plot = plot(breastcancer$compactness_mean, breastcancer$diagnosis)
+```
+
+
