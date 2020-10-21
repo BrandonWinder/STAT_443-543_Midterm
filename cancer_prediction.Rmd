@@ -5,3 +5,11 @@ date: "10/21/2020"
 output: word_document
 ---
 
+breastcancer$diagnosis = factor(breastcancer$diagnosis)
+
+radius_plot = plot(breastcancer$radius_mean, breastcancer$diagnosis)
+texture_plot = plot(breastcancer$texture_mean, breastcancer$diagnosis)
+area_plot = plot(breastcancer$area_mean, breastcancer$diagnosis)
+smooth_plot = plot(breastcancer$smoothness_mean, breastcancer$diagnosis)
+permieter_plot = plot(breastcancer$perimeter_mean, breastcancer$diagnosis)
+compact_plot = plot(breastcancer$compactness_mean, breastcancer$diagnosis)
