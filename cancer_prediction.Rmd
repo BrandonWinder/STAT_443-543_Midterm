@@ -20,6 +20,35 @@ area_plot = plot(breastcancer$area_mean, breastcancer$diagnosis)
 smooth_plot = plot(breastcancer$smoothness_mean, breastcancer$diagnosis)
 permieter_plot = plot(breastcancer$perimeter_mean, breastcancer$diagnosis)
 compact_plot = plot(breastcancer$compactness_mean, breastcancer$diagnosis)
+
+
+#transformations
+logarea = log(breastcancer$area_mean)
+logareaplot = boxplot(logarea, breastcancer$diagnosis)
+
+logradius = log(breastcancer$radius_mean)
+logradplot = boxplot(logradius, breastcancer$diagnosis)
+
+textlog = log(breastcancer$texture_mean)
+logtextplot = boxplot(textlog, breastcancer$diagnosis)
+
+perimeterlog = log(breastcancer$perimeter_mean)
+logperimeterplot = boxplot(perimeterlog, breastcancer$diagnosis) 
+
+compactlog = log(breastcancer$compactness_mean)
+compactlogplot = boxplot(compactlog, breastcancer$diagnosis)
+
+recipfract = 1/(breastcancer$fractal_dimension_mean)
+fractrecipplot = boxplot(recipfract, breastcancer$diagnosis)
+
+concavepointsqrt = sqrt(breastcancer$concave.points_mean)
+concavesqrtplot = boxplot(concavepointsqrt, breastcancer$diagnosis)
+
+concavityx = (breastcancer$concavity_mean)^(1/3)
+cocavityplot = boxplot(concavityx, breastcancer$diagnosis)
+
+symmetrylog = log(breastcancer$symmetry_mean)
+symmetrylogplot = boxplot(symmetrylog, breastcancer$diagnosis)
 ```
 
 
