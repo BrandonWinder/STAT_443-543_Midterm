@@ -18,6 +18,9 @@ The goal of our work is to use data on tissue samples taken from cancerous breas
 # Read in the data file and make diagnosis a factor variable.
 breastcancer <- read.csv("breastcancer.csv")
 breastcancer$diagnosis = factor(breastcancer$diagnosis)
+
+# Print the summaries for all variable means
+summary(breastcancer[3:12])
 ```
 
 ```{r}
@@ -30,9 +33,10 @@ permieter_plot = plot(breastcancer$perimeter_mean, breastcancer$diagnosis)
 compact_plot = plot(breastcancer$compactness_mean, breastcancer$diagnosis)
 ```
 
+After analyzing the summaries and the distribution of the variables we have decided to perform many transformations to account for abnormally distributed data. The transformations on each variable can be seen in the boxplots displayed below. 
 
 ```{r echo=FALSE}
-# Perform the transformations to account for skewed data and display the side-by-side boxplot for malignant and benign cancer samples.
+# Display the side-by-side boxplot for malignant and benign cancer samples.
 breastcancer %>% ggplot(aes(log(area_mean), diagnosis)) + 
   geom_boxplot() + 
   xlab("Log Area Mean") +
@@ -86,6 +90,12 @@ breastcancer %>% ggplot(aes(log(symmetry_mean), diagnosis)) +
   xlab("Log Symmetry Mean") +
   ylab("Diagnosis") +
   ggtitle("Log Symmetry Mean by Diagnosis")
+
+breastcancer %>% ggplot(aes(smoothness_mean, diagnosis)) + 
+  geom_boxplot() + 
+  xlab("Smoothness Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Smoothness Mean by Diagnosis")
 ```
 
 
