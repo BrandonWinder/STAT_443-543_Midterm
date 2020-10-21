@@ -1,54 +1,91 @@
 ---
-title: "cancer_prediction"
+title: "Cancer Prediction"
 author: "Group 2"
 date: "10/21/2020"
 output: word_document
 ---
+```{r include=FALSE}
+library(ggplot2)
+library(dplyr)
+```
+
 
 # Introduction
 The goal of our work is to use data on tissue samples taken from cancerous breast tissue to create a logistic regression model that can be used to accurately predict if a cancer sample is malignant or benign.  Our approach is to first analyze different predictor variables to check for extreme values that could influence our models accuracy.  To do this we will plot predictor variables and look for outliers that could skew the variable.  If need be we can then transform variables using such transformations as square roots, logarithms, and reciprocals.  We will also look at the predictor variables to determine if any are highly correlated.  If so, we will be able to reduce the number of predictor variables to account for overfitting our regression model.  Once we have checked our predictor variables, and transformed those where we felt necessary,  We then intend to build models and test their predictive capabilities.
 
 # Exploring and Transforming the Data
 ```{r}
+# Read in the data file and make diagnosis a factor variable.
 breastcancer <- read.csv("breastcancer.csv")
-
 breastcancer$diagnosis = factor(breastcancer$diagnosis)
+```
 
+```{r}
+# First look at the scatter plots of the means.
 radius_plot = plot(breastcancer$radius_mean, breastcancer$diagnosis)
 texture_plot = plot(breastcancer$texture_mean, breastcancer$diagnosis)
 area_plot = plot(breastcancer$area_mean, breastcancer$diagnosis)
 smooth_plot = plot(breastcancer$smoothness_mean, breastcancer$diagnosis)
 permieter_plot = plot(breastcancer$perimeter_mean, breastcancer$diagnosis)
 compact_plot = plot(breastcancer$compactness_mean, breastcancer$diagnosis)
+```
 
 
-#transformations
-logarea = log(breastcancer$area_mean)
-logareaplot = boxplot(logarea, breastcancer$diagnosis)
+```{r echo=FALSE}
+# Perform the transformations to account for skewed data and display the side-by-side boxplot for malignant and benign cancer samples.
+breastcancer %>% ggplot(aes(log(area_mean), diagnosis)) + 
+  geom_boxplot() + 
+  xlab("Log Area Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Log Area Mean by Diagnosis")
 
-logradius = log(breastcancer$radius_mean)
-logradplot = boxplot(logradius, breastcancer$diagnosis)
+breastcancer %>% ggplot(aes(log(radius_mean), diagnosis)) + 
+  geom_boxplot() + 
+  xlab("Log Radius Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Log Radius Mean by Diagnosis")
 
-textlog = log(breastcancer$texture_mean)
-logtextplot = boxplot(textlog, breastcancer$diagnosis)
+breastcancer %>% ggplot(aes(log(texture_mean), diagnosis)) +
+  geom_boxplot() + 
+  xlab("Log Texture Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Log Texture Mean by Diagnosis")
 
-perimeterlog = log(breastcancer$perimeter_mean)
-logperimeterplot = boxplot(perimeterlog, breastcancer$diagnosis) 
+breastcancer %>% ggplot(aes(log(perimeter_mean), diagnosis)) + 
+  geom_boxplot() + 
+  xlab("Log Perimeter Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Log Perimeter Mean by Diagnosis")
 
-compactlog = log(breastcancer$compactness_mean)
-compactlogplot = boxplot(compactlog, breastcancer$diagnosis)
+breastcancer %>% ggplot(aes(log(compactness_mean), diagnosis)) + 
+  geom_boxplot() + 
+  xlab("Log Compactness Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Log Compactness Mean by Diagnosis")
 
-recipfract = 1/(breastcancer$fractal_dimension_mean)
-fractrecipplot = boxplot(recipfract, breastcancer$diagnosis)
+breastcancer %>% ggplot(aes(1/(fractal_dimension_mean), diagnosis)) + 
+  geom_boxplot() + 
+  xlab("Reciprical of Fractal Dimension Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Reciprical Fractal Dimension Mean by Diagnosis")
 
-concavepointsqrt = sqrt(breastcancer$concave.points_mean)
-concavesqrtplot = boxplot(concavepointsqrt, breastcancer$diagnosis)
+breastcancer %>% ggplot(aes(sqrt(concave.points_mean), diagnosis)) + 
+  geom_boxplot() + 
+  xlab("Square Root Concavity Points Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Square Root Concave Points Mean by Diagnosis")
 
-concavityx = (breastcancer$concavity_mean)^(1/3)
-cocavityplot = boxplot(concavityx, breastcancer$diagnosis)
+breastcancer %>% ggplot(aes((concavity_mean)^(1/3), diagnosis)) +
+  geom_boxplot() + 
+  xlab("Cube Root Concavity Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Cube Root Concavity Mean by Diagnosis")
 
-symmetrylog = log(breastcancer$symmetry_mean)
-symmetrylogplot = boxplot(symmetrylog, breastcancer$diagnosis)
+breastcancer %>% ggplot(aes(log(symmetry_mean), diagnosis)) + 
+  geom_boxplot() + 
+  xlab("Log Symmetry Mean") +
+  ylab("Diagnosis") +
+  ggtitle("Log Symmetry Mean by Diagnosis")
 ```
 
 
