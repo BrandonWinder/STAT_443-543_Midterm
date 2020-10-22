@@ -33,6 +33,10 @@ area_plot = plot(breastcancer$area_mean, breastcancer$diagnosis)
 smooth_plot = plot(breastcancer$smoothness_mean, breastcancer$diagnosis)
 permieter_plot = plot(breastcancer$perimeter_mean, breastcancer$diagnosis)
 compact_plot = plot(breastcancer$compactness_mean, breastcancer$diagnosis)
+fractalplot = plot(breastcancer$fractal_dimension_mean, breastcancer$diagnosis)
+concaveplot = plot(breastcancer$concavity_mean, breastcancer$diagnosis)
+concavepointplot = plot(breastcancer$concave.points_mean, breastcancer$diagnosis)
+symmetryplot = plot(breastcancer$symmetry_mean, breastcancer$diagnosis)
 ```
 
 After analyzing the summaries and the distribution of the variables we have decided to perform many transformations to account for abnormally distributed data. The transformations on each variable can be seen in the boxplots displayed below.
