@@ -5,8 +5,10 @@ date: "10/21/2020"
 output: word_document
 ---
 ```{r include=FALSE}
+# Loads all necessary libraries.
 library(ggplot2)
 library(dplyr)
+library(corrplot)
 ```
 
 
@@ -98,4 +100,11 @@ breastcancer %>% ggplot(aes(smoothness_mean, diagnosis)) +
   ggtitle("Smoothness Mean by Diagnosis")
 ```
 
+```{r echo=FALSE}
+# Create correlations for the predictor variables.
+breastcancer_corr <- cor(breastcancer[3:12], use = "complete.obs")
+
+# Create a correlation plot for the predictor variables.
+corrplot(breastcancer_corr, type = "upper", tl.cex = 0.55)
+```
 
