@@ -39,7 +39,7 @@ concavepointplot = plot(breastcancer$concave.points_mean, breastcancer$diagnosis
 symmetryplot = plot(breastcancer$symmetry_mean, breastcancer$diagnosis)
 ```
 
-After analyzing the summaries and the distribution of the variables we have decided to perform many transformations to account for abnormally distributed data. The transformations on each variable can be seen in the boxplots displayed below.
+After analyzing the summaries and the distribution of the variables we have decided to perform transformations on specific variables where data appeared abnormally distributed. The transformations on each variable can be seen in the boxplots displayed below.
 
 ```{r echo=FALSE}
 # Display the side-by-side boxplot for malignant and benign cancer samples.
