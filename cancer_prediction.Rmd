@@ -22,7 +22,7 @@ breastcancer <- read.csv("breastcancer.csv")
 breastcancer$diagnosis <- ifelse(breastcancer$diagnosis == "M", 1,0)
 breastcancer$diagnosis <- as.factor(breastcancer$diagnosis)
 
-# Print the summaries for all variable means
+# Print the summaries for all variable means 
 summary(breastcancer[3:12])
 ```
 
