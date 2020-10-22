@@ -17,9 +17,10 @@ The goal of our work is to use data on tissue samples taken from cancerous breas
 
 # Exploring and Transforming the Data
 ```{r}
-# Read in the data file and make diagnosis a factor variable.
+# Read in the data file and make diagnosis a factor variable with 1 as M and 0 as B.
 breastcancer <- read.csv("breastcancer.csv")
 breastcancer$diagnosis <- ifelse(breastcancer$diagnosis == "M", 1,0)
+breastcancer$diagnosis <- as.factor(breastcancer$diagnosis)
 
 # Print the summaries for all variable means
 summary(breastcancer[3:12])
