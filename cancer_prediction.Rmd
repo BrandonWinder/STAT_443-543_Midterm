@@ -25,8 +25,8 @@ breastcancer$diagnosis <- as.factor(breastcancer$diagnosis)
 # Print the summaries for all variable means 
 summary(breastcancer[3:12])
 ```
-
-```{r}
+Display the scatter plots of the means.
+```{r echo=FALSE, out.width = "10%"}
 # First look at the scatter plots of the means.
 radius_plot = plot(breastcancer$radius_mean, breastcancer$diagnosis)
 texture_plot = plot(breastcancer$texture_mean, breastcancer$diagnosis)
@@ -42,7 +42,7 @@ symmetryplot = plot(breastcancer$symmetry_mean, breastcancer$diagnosis)
 
 After analyzing the summaries and the distribution of the variables we have decided to perform transformations on specific variables where data appeared abnormally distributed. The transformations on each variable can be seen in the boxplots displayed below.
 
-```{r echo=FALSE}
+```{r echo=FALSE, out.width = "10%"}
 # Display the side-by-side boxplot for malignant and benign cancer samples.
 breastcancer %>% ggplot(aes(log(area_mean), diagnosis)) + 
   geom_boxplot() + 
@@ -105,7 +105,7 @@ breastcancer %>% ggplot(aes(smoothness_mean, diagnosis)) +
   ggtitle("Smoothness Mean by Diagnosis")
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, out.width="10%"}
 # Create correlations for the predictor variables.
 breastcancer_corr <- cor(breastcancer[3:12], use = "complete.obs")
 
