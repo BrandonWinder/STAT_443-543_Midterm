@@ -148,8 +148,4 @@ train.index = createDataPartition(breastcancer$diagnosis, p = 0.6,
                                   times = 1)
 train.df = breastcancer[train.index,]
 valid.df = breastcancer[-train.index,]
-
-
-
-
 ```
