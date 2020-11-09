@@ -25,7 +25,8 @@ breastcancer$diagnosis <-  ifelse(breastcancer$diagnosis == "M", 1, 0)
 breastcancer$diagnosis <- as.factor(breastcancer$diagnosis)
 
 # Print the summaries for all variable means
-summary(breastcancer[3:12])
+summaries <- as.data.frame(apply(breastcancer[3:12], 2, summary))
+round(summaries, digits = 2)
 ```
 
 Scatter plots for each variable mean are displayed below:
