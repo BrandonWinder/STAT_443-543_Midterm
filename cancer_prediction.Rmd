@@ -127,6 +127,9 @@ breastcancer %>% ggplot(aes(smoothness_mean, diagnosis)) +
   ylab("Diagnosis") +
   ggtitle("Smoothness Mean by Diagnosis") +
   theme(plot.title = element_text(size = 10))
+
+# Modify the data frame with all the transformations.
+breastcancer <- breastcancer %>% mutate(area_mean = log(area_mean), radius_mean = log(radius_mean), texture_mean = log(texture_mean), perimeter_mean = log(perimeter_mean), compactness_mean = log(compactness_mean), fractal_dimension_mean = 1/(fractal_dimension_mean), concave.points_mean = sqrt(concave.points_mean), concavity_mean = (concavity_mean)^(1/3), symmetry_mean = log(symmetry_mean))
 ```
 
 Based on this correlation plot we can see that the variable 'concave.points_mean' and 'concavity_mean' have a high positive correlation with most other predictor variable means. So, we will want to pay close attention to these variables when creating the logistic regression model to avoid multicollinearity. Additionally, we will want to examine the variables 'radius_mean', 'perimeter_mean', and 'area_mean' because they are also highly positively correlated. 
