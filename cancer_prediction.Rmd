@@ -132,25 +132,31 @@ breastcancer %>% ggplot(aes(smoothness_mean, diagnosis)) +
 breastcancer <- breastcancer %>% mutate(area_mean = log(area_mean), radius_mean = log(radius_mean), texture_mean = log(texture_mean), perimeter_mean = log(perimeter_mean), compactness_mean = log(compactness_mean), fractal_dimension_mean = 1/(fractal_dimension_mean), concave.points_mean = sqrt(concave.points_mean), concavity_mean = (concavity_mean)^(1/3), symmetry_mean = log(symmetry_mean))
 ```
 
-Based on this correlation plot we can see that the variable 'concave.points_mean' and 'concavity_mean' have a high positive correlation with most other predictor variable means. So, we will want to pay close attention to these variables when creating the logistic regression model to avoid multicollinearity. Additionally, we will want to examine the variables 'radius_mean', 'perimeter_mean', and 'area_mean' because they are also highly positively correlated. 
+Based on this correlation plot we can see that the variable 'concave.points_mean' and 'concavity_mean' have a high positive correlation with most other predictor variable means. Also when looking at the predictor variables standard errors and worst values we found the same trends in correlations. So, we will want to pay close attention to these variables when creating the logistic regression model to avoid multicollinearity. Additionally, we will want to examine the variables 'radius_mean', 'perimeter_mean', and 'area_mean' because they are also highly positively correlated.  
 
 ```{r echo=FALSE, fig.dim=c(3,3)}
 # Create correlations for the predictor variables.
 breastcancer_corr <- cor(breastcancer[3:12], use = "complete.obs")
 
-breastcancer_corr_se <- cor(breastcancer[13:22], use = "complete.obs")
-
-breastcancer_corr_worst <- cor(breastcancer[23:32], use = "complete.obs")
-
 # Create a correlation plot for the predictor variables.
 corrplot(breastcancer_corr, type = "upper", tl.cex = 0.5)
+```
+
+```{r include=FALSE}
+# Find correlations for the standard error and worst variables.
+breastcancer_corr_se <- cor(breastcancer[13:22], use = "complete.obs")
+breastcancer_corr_worst <- cor(breastcancer[23:32], use = "complete.obs")
+
+# Display the plots.
 corrplot(breastcancer_corr_se, type = "upper", tl.cex = 0.5)
 corrplot(breastcancer_corr_worst, type = "upper", tl.cex = 0.5)
 ```
 
+
 ```{r}
 #creating data frame with only variables of interest
 breastcancer1 = breastcancer[,-c(1,13:32)]
+
 #Partitioning the data into training and validation sets
 library(caret)
 set.seed(12)
