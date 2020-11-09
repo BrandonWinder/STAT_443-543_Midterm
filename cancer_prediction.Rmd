@@ -143,7 +143,7 @@ corrplot(breastcancer_corr, type = "upper", tl.cex = 0.5)
 #Partitioning the data into training and validation sets
 library(caret)
 set.seed(12)
-train.index = createDataPartition(breastcancer$diagnosis, p = 0.6,
+train.index = createDataPartition(breastcancer$diagnosis, p = 0.75,
                                   list = FALSE,
                                   times = 1)
 train.df = breastcancer[train.index,]
