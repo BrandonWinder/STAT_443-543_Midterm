@@ -142,3 +142,13 @@ breastcancer_corr <- cor(breastcancer[3:12], use = "complete.obs")
 corrplot(breastcancer_corr, type = "upper", tl.cex = 0.5)
 ```
 
+```{r}
+#Partitioning the data into training and validation sets
+library(caret)
+set.seed(12)
+train.index = createDataPartition(breastcancer$diagnosis, p = 0.6,
+                                  list = FALSE,
+                                  times = 1)
+train.df = breastcancer[train.index,]
+valid.df = breastcancer[-train.index,]
+```
