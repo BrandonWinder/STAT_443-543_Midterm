@@ -9,6 +9,8 @@ output: word_document
 library(ggplot2)
 library(dplyr)
 library(corrplot)
+library(pROC)
+library(caret)
 ```
 
 
@@ -157,7 +159,6 @@ corrplot(breastcancer_corr_worst, type = "upper", tl.cex = 0.5)
 breastcancer1 <- breastcancer[,-c(1,13:32)]
 
 # Partitioning the data into training and validation sets
-library(caret)
 set.seed(12)
 train.index <- createDataPartition(breastcancer1$diagnosis, p = 0.75,
                                   list = FALSE,
@@ -176,3 +177,16 @@ summary(back.elim)
 forward.elim <- step(modALL, direction = "forward", trace = 0)
 summary(forward.elim)
 ```
+
+```{r}
+pred <- predict(modALL, valid.df, type = "response")
+class <- ifelse(pred >= 0.5, 1, 0)
+table <- table(class, valid.df$diagnosis)
+
+table[2,2]/sum(table[,2])
+table[1,1]/sum(table[,1])
+
+rocfit <- roc(valid.df$diagnosis, class)
+rocfit$auc
+```
+
