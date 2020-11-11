@@ -134,7 +134,7 @@ breastcancer <- breastcancer %>% mutate(area_mean = log(area_mean), radius_mean 
 
 Based on this correlation plot we can see that the variable 'concave.points_mean' and 'concavity_mean' have a high positive correlation with most other predictor variable means. Also when looking at the predictors standard errors and worst values we see the same trends. So, we will want to pay close attention to these variables when creating the logistic regression model to avoid multicollinearity. Additionally, we will want to examine the variables 'radius_mean', 'perimeter_mean', and 'area_mean' because they are also highly positively correlated. 
 
-```{r echo=FALSE, fig.dim=c(3,3)}
+```{r echo=FALSE, fig.dim=c(4,4)}
 # Create correlations for the predictor variables.
 breastcancer_corr <- cor(breastcancer[3:12], use = "complete.obs")
 
@@ -183,10 +183,11 @@ pred <- predict(modALL, valid.df, type = "response")
 class <- ifelse(pred >= 0.5, 1, 0)
 table <- table(class, valid.df$diagnosis)
 
+paste("Senstivity: ")
 table[2,2]/sum(table[,2])
+paste("Specificity: ")
 table[1,1]/sum(table[,1])
-
-rocfit <- roc(valid.df$diagnosis, class)
-rocfit$auc
+paste("Overall accuracy: ")
+(table[1,1] + table[2,2]) / length(class)
 ```
 
