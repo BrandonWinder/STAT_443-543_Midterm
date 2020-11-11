@@ -15,7 +15,7 @@ library(caret)
 
 
 # Introduction
-The goal of our work is to use data on tissue samples taken from cancerous breast tissue to create a logistic regression model that can be used to accurately predict if a cancer sample is malignant or benign.  Our approach is to first analyze all 10 mean predictor variables to check for extreme values that could influence our models accuracy.  We chose to use mean predictors exclusively because the worst predictors should be included in the mean, but we didn't want to focuse on the outliers for each specific observation.  To do this, we will plot predictor variables and look for outliers that could skew the variable.  If need be, we can then transform the skewed variables through the use of square roots, logarithms, and reciprocals.  We will also look at the predictor variables to determine if any are highly correlated so that we can  reduce the number of predictor variables to account for overfitting our regression model.  Once we have checked our predictor variables and transformed those where we felt necessary, we will build models and test their predictive capabilities.
+The goal of our work is to use data on tissue samples taken from cancerous breast tissue to create a logistic regression model that can be used to accurately predict if a cancer sample is malignant or benign.  Our approach is to first analyze all 10 mean predictor variables to check for extreme values that could influence our models accuracy.  We chose to use mean predictors exclusively because the worst predictors should be included in the mean, but we didn't want to focus on the outliers for each specific observation.  Additionally we did not include the standard error variables to predict whether cancer cells are malignant or benign because they are solely based off the mean variables and would not provide much information on the diagnosis.  To do this, we will plot predictor variables and look for outliers that could skew the variable.  If need be, we can then transform the skewed variables through the use of square roots, logarithms, and reciprocals.  We will also look at the predictor variables to determine if any are highly correlated so that we can  reduce the number of predictor variables to account for overfitting our regression model.  Once we have checked our predictor variables and transformed those where we felt necessary, we will build models and test their predictive capabilities.
 
 # Exploring and Transforming the Data
 The descriptive statistics for each variable mean of interest are displayed below: 
@@ -168,7 +168,25 @@ valid.df = breastcancer1[-train.index,]
 
 # Building model with all predictors
 modALL <- glm(diagnosis ~ ., family = binomial, data = train.df)
+```
 
+```{r}
+# Find the predicted class of the validation data and create contingency table.
+pred <- predict(modALL, valid.df, type = "response")
+class <- ifelse(pred >= 0.5, 1, 0)
+table <- table(class, valid.df$diagnosis)
+
+# Find the sensitivity, specificity, and overall accuracy.
+paste("Senstivity: ")
+table[2,2]/sum(table[,2])
+paste("Specificity: ")
+table[1,1]/sum(table[,1])
+paste("Overall accuracy: ")
+(table[1,1] + table[2,2]) / length(class)
+```
+
+## Model Selection
+```{r}
 # Back step
 back.elim <- step(modALL, direction = "backward", trace = 0)
 summary(back.elim)
@@ -178,16 +196,35 @@ forward.elim <- step(modALL, direction = "forward", trace = 0)
 summary(forward.elim)
 ```
 
+### Back
 ```{r}
-pred <- predict(modALL, valid.df, type = "response")
-class <- ifelse(pred >= 0.5, 1, 0)
-table <- table(class, valid.df$diagnosis)
+# Find the predicted class of the validation data and create contingency table.
+pred2 <- predict(back.elim, valid.df, type = "response")
+class2 <- ifelse(pred2 >= 0.5, 1, 0)
+table2 <- table(class2, valid.df$diagnosis)
 
+# Find the sensitivity, specificity, and overall accuracy.
 paste("Senstivity: ")
-table[2,2]/sum(table[,2])
+table2[2,2]/sum(table2[,2])
 paste("Specificity: ")
-table[1,1]/sum(table[,1])
+table2[1,1]/sum(table2[,1])
 paste("Overall accuracy: ")
-(table[1,1] + table[2,2]) / length(class)
+(table2[1,1] + table2[2,2]) / length(class2)
+```
+
+### Forward
+```{r}
+# Find the predicted class of the validation data and create contingency table.
+pred3 <- predict(forward.elim, valid.df, type = "response")
+class3 <- ifelse(pred3 >= 0.5, 1, 0)
+table3 <- table(class3, valid.df$diagnosis)
+
+# Find the sensitivity, specificity, and overall accuracy.
+paste("Senstivity: ")
+table3[2,2]/sum(table3[,2])
+paste("Specificity: ")
+table3[1,1]/sum(table3[,1])
+paste("Overall accuracy: ")
+(table3[1,1] + table3[2,2]) / length(class3)
 ```
 
