@@ -192,7 +192,8 @@ back.elim <- step(modALL, direction = "backward", trace = 0)
 summary(back.elim)
 
 # Forward step
-forward.elim <- step(modALL, direction = "forward", trace = 0)
+null <- glm(diagnosis ~ 1, family = binomial, data = train.df)
+forward.elim <- step(null, scope = list(lower = null, upper = modALL), direction = "forward", trace = 0)
 summary(forward.elim)
 ```
 
@@ -226,5 +227,14 @@ paste("Specificity: ")
 table3[1,1]/sum(table3[,1])
 paste("Overall accuracy: ")
 (table3[1,1] + table3[2,2]) / length(class3)
+```
+
+## Optimal Threshold
+```{r}
+rocfit <- roc(valid.df$diagnosis, class2)
+metrics <- rocfit$sensitivities + rocfit$specificities
+max.metric.ind <- which(metrics == max(metrics))
+opt.threshold <- rocfit$thresholds[max.metric.ind]
+opt.threshold
 ```
 
