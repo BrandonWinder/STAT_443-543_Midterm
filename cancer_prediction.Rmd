@@ -154,6 +154,7 @@ corrplot(breastcancer_corr_worst, type = "upper", tl.cex = 0.5)
 
 
 ## The Logistic Model
+First we created a model for prediction with all of the variables used in the model.  We then created contigency tables and found the sensitivity, specificity, and the overall accuracy of the model.
 ```{r}
 # Creating data frame with only variables of interest
 breastcancer1 <- breastcancer[,-c(1,13:32)]
@@ -186,6 +187,7 @@ paste("Overall accuracy: ")
 ```
 
 ## Model Selection
+
 ```{r}
 # Back step
 back.elim <- step(modALL, direction = "backward", trace = 0)
@@ -262,14 +264,8 @@ max_cut
 
 #predicting blind data sets
 ```{r}
-# Read in the blind data.
-breastcancer_blind <- read.csv("breastcancer-test-blinded.csv")
-
-# Modify the data frame with all the transformations.
-breastcancer_blind <- breastcancer_blind %>% mutate(area_mean = log(area_mean), radius_mean = log(radius_mean), texture_mean = log(texture_mean), perimeter_mean = log(perimeter_mean), compactness_mean = log(compactness_mean), fractal_dimension_mean = 1/(fractal_dimension_mean), concave.points_mean = sqrt(concave.points_mean), concavity_mean = (concavity_mean)^(1/3), symmetry_mean = log(symmetry_mean))
-
-pred5 <- predict(back.elim, breastcancer_blind, type = "response")
-class5 <- ifelse(pred4 >= 0.5, 1, 0)
-class5
+pred4 <- predict(back.elim, breastcancer.test.blinded, type = "response")
+class4 <- ifelse(pred4 >= 0.5, 1, 0)
+class4
 ```
 
