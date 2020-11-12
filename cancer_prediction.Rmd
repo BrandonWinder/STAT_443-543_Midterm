@@ -237,6 +237,29 @@ max.metric.ind <- which(metrics == max(metrics))
 opt.threshold <- rocfit$thresholds[max.metric.ind]
 opt.threshold
 ```
+
+```{r}
+# Create values from 0.01 to 0.99.
+cut <- seq(from = .01, to = .99, by = .01)
+
+# Initialize a data frame with two columns: k, and accuracy.
+accuracy <- data.frame(Probability = cut, Accuracy = rep(0, length(cut)))
+
+# Create the dataframe with all the accuracies for cutoffs.
+for(i in 1:length(cut)){
+  pred4 <- predict(back.elim, valid.df, type = "response")
+class4 <- ifelse(pred4 >= cut[i], 1, 0)
+table4 <- table(class4, valid.df$diagnosis)
+  
+  accuracy[i,2] <- (table4[1,1] + table4[2,2]) / length(class4)
+}
+
+# Find which cutoff results in the highest accuracy.
+max_cut <- accuracy[which.max(accuracy[,2]),]
+max_cut
+```
+
+
 #predicting blind data sets
 ```{r}
 pred4 <- predict(back.elim, breastcancer.test.blinded, type = "response")
