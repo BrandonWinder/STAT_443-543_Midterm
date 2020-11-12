@@ -154,7 +154,8 @@ corrplot(breastcancer_corr_worst, type = "upper", tl.cex = 0.5)
 
 
 ## The Logistic Model
-First we created a model for prediction with all of the variables used in the model.  We then created contigency tables and found the sensitivity, specificity, and the overall accuracy of the model.
+First, we seperated the data into a training and validation set.  This allowed us to build our model in the training set and then test against the validation set.  This is needed to make sure the model is not overfitted. Not having these sets can cause the data to perform worse on testing if these sets are not created.
+Next, we created a model for prediction with all of the variables used in the model.  We then created contigency tables and found the sensitivity, specificity, and the overall accuracy of the model.
 ```{r}
 # Creating data frame with only variables of interest
 breastcancer1 <- breastcancer[,-c(1,13:32)]
@@ -187,7 +188,7 @@ paste("Overall accuracy: ")
 ```
 
 ## Model Selection
-
+After making the first model, we made two other models.  We made the forward and backward stepwise regression models.  We then created contigency tables and found the sensitivity, specificity, and the overall accuracy for both of the models.  Overall, we ended choosing the backward stepwise regression model as it was slightly better than both of the other models and it also used less predictors.
 ```{r}
 # Back step
 back.elim <- step(modALL, direction = "backward", trace = 0)
@@ -232,6 +233,7 @@ paste("Overall accuracy: ")
 ```
 
 ## Optimal Threshold
+We created an accuracy plot for all varying classifiction thresholds and it showed that thresholds between .43 and .53 have the same accuracy and also the highest accuracy among all thresholds.  We ended up choosing .5 as our threshold because it is in the middle of all of the proballities and it still had the highest accuracy for the data.
 ```{r}
 # Create values from 0.01 to 0.99.
 cut <- seq(from = .01, to = .99, by = .01)
@@ -261,7 +263,7 @@ opt_thresh_plot
 ```
 
 
-#predicting blind data sets
+#Predicting Blind Data Sets
 ```{r}
 # Read in the blind data.
 breastcancer_blind <- read.csv("breastcancer-test-blinded.csv")
@@ -283,4 +285,5 @@ Diagnosis = ifelse(Diagnosis == 1, "M", "B")
 Diagnosis.Table = cbind(Diagnosis.Table, Diagnosis)
 write.csv(Diagnosis.Table, "Diagnosis.Table.csv")
 ```
-
+# Results Summary
+In conclusion, the backwards elimation model is the best model for predicing whether a cancerous breast tissue is malignant or benign.  This comes from how the backwards elimanation model has the highest accuracy for all three models tested and also has the lowest amount of predictors in any of the models. The accuracy of this model was 97.4% and the classification threshold we choose was at 50%. This model also has a sensivity of 95.2% and a speciviity of 98.6%. Overall, the backwards elimanation model does the best job in all categories of predicting cancerous breast tissue.
