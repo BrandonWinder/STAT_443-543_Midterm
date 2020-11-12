@@ -54,7 +54,7 @@ symmetry_plot = plot(breastcancer$symmetry_mean, breastcancer$diagnosis, xlab="S
 smooth_plot = plot(breastcancer$smoothness_mean, breastcancer$diagnosis, xlab="Smoothness Mean", ylab = "Diagnosis", main = "Smoothness Mean against Diagnosis", cex.main = 0.75)
 ```
 
-After analyzing the summaries and the distribution of the variables, we have decided to perform many transformations to account for abnormally distributed data. The transformations on each variable can be seen in the boxplots displayed below.  These transformations were performed because the normal boxplots of the predictors had outliers and/or were highly skewed. Then the data was transformed either by a log, reciprocal, square root, and cube root transformations.  These transformations make the distributions less skewed and contain less outliers, making sure the data is as close to normal as possible.  After performing the transformations, the box plots shown below show less outliers and are less skewed than the originals.  These transformations have a more likely chance of getting better prediction models later when we conduct tests of the data.  Models will also be more accurate with these changes in transformations as there are less outliers to skew the models that we will conduct later.  Overall, these transformations were needed to better fit models and get the data as close to normal as possible. The boxplots shown below help us identify which variables need to be transformed.  When we plot these we are looking for three things in these plots.  We are looking to see how many outliers the data has, the spread of the data and if it is consistent throughtout all of plot, and we are also looking to see if the data is heavily skewed in these boxplots as well.  These three factors will help us determine if we need to make the data fit better to a normal curve.
+After analyzing the summaries and the distribution of the variables, we have decided to perform many transformations to account for abnormally distributed data. The transformations on each variable can be seen in the boxplots displayed below.  These transformations were performed because the normal boxplots of the predictors had outliers and/or were highly skewed. Then the data was transformed either by a log, reciprocal, square root, or cube root transformations.  These transformations make the distributions less skewed and contain less outliers, making sure the data is as close to normal as possible.  After performing the transformations, the box plots shown below show less outliers and are less skewed than the originals.  These transformations have a more likely chance of getting better prediction models later when we conduct tests of the data.  Models will also be more accurate with these changes in transformations as there are less outliers to skew the models that we will conduct later.  Overall, these transformations were needed to better fit models and get the data as close to normal as possible. The boxplots shown below help us identify which variables need to be transformed.  When we plot these we are looking for three things.  We are looking to see how many outliers the data has, the spread of the data and if it is consistent throughtout all of plot, and we are also looking to see if the data is heavily skewed in these boxplots as well.  These three factors will help us determine if we need to make the data fit better to a normal curve.
 
 ```{r fig.dim=c(3,3), include=FALSE}
 # Display the side-by-side boxplot for malignant and benign cancer samples.
@@ -154,7 +154,7 @@ corrplot(breastcancer_corr_worst, type = "upper", tl.cex = 0.5)
 
 
 ## The Logistic Model
-First, we seperated the data into a training and validation set.  This allowed us to build our model in the training set and then test against the validation set.  This is needed to make sure the model is not overfitted. Not having these sets can cause the data to perform worse on testing if these sets are not created.
+First, we seperated the data into a training and validation set.  This allowed us to build our model in the training set and then test against the validation set.  This is needed to make sure the model is not overfitted. Testing our model on a validation set that wasn't used to create the model allows us to check that the model is actually useful in prediction with new data.
 Next, we created a model for prediction with all of the variables used in the model.  We then created contigency tables and found the sensitivity, specificity, and the overall accuracy of the model.
 ```{r}
 # Creating data frame with only variables of interest
@@ -188,7 +188,7 @@ paste("Overall accuracy: ")
 ```
 
 ## Model Selection
-After making the first model, we made two other models.  We made the forward and backward stepwise regression models.  We then created contigency tables and found the sensitivity, specificity, and the overall accuracy for both of the models.  Overall, we ended choosing the backward stepwise regression model as it was slightly better than both of the other models and it also used less predictors.
+After making our model utilizing all predictors, we made two other models which were forward and backward stepwise regression models.  We then created contigency tables and found the sensitivity, specificity, and the overall accuracy for both of the models.  Overall, we ended choosing the backward stepwise regression model as it had slightly better accuracy while also using fewer predictor variables.
 ```{r}
 # Back step
 back.elim <- step(modALL, direction = "backward", trace = 0)
@@ -233,7 +233,7 @@ paste("Overall accuracy: ")
 ```
 
 ## Optimal Threshold
-We created an accuracy plot for all varying classifiction thresholds and it showed that thresholds between .43 and .53 have the same accuracy and also the highest accuracy among all thresholds.  We ended up choosing .5 as our threshold because it is in the middle of all of the proballities and it still had the highest accuracy for the data.
+We created an accuracy plot for all varying classifiction thresholds and it showed that thresholds between .43 and .53 have the same accuracy and also the highest accuracy among all thresholds.  We ended up choosing .5 as our threshold because it is in the middle of all of the probabilities and it still had the highest accuracy for the data.
 ```{r}
 # Create values from 0.01 to 0.99.
 cut <- seq(from = .01, to = .99, by = .01)
@@ -286,4 +286,4 @@ Diagnosis.Table = cbind(Diagnosis.Table, Diagnosis)
 write.csv(Diagnosis.Table, "Diagnosis.Table.csv")
 ```
 # Results Summary
-In conclusion, the backwards elimation model is the best model for predicing whether a cancerous breast tissue is malignant or benign.  This comes from how the backwards elimanation model has the highest accuracy for all three models tested and also has the lowest amount of predictors in any of the models. The accuracy of this model was 97.4% and the classification threshold we choose was at 50%. This model also has a sensivity of 95.2% and a speciviity of 98.6%. Overall, the backwards elimanation model does the best job in all categories of predicting cancerous breast tissue.
+In conclusion, the backwards elimation model is the best model for predicing whether a cancerous breast tissue is malignant or benign.  This comes from how the backwards elimanation model has the highest accuracy of all three models tested and also has the lowest amount of predictors in any of the models. The accuracy of this model was 97.4% and the classification threshold we choose was at 0.5. This model also has a sensivity of 95.2% and a specifiity of 98.6%. Overall, the backwards elimanation model does the best job in all categories of predicting cancerous breast tissue.
