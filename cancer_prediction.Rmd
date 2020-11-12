@@ -237,4 +237,10 @@ max.metric.ind <- which(metrics == max(metrics))
 opt.threshold <- rocfit$thresholds[max.metric.ind]
 opt.threshold
 ```
+#predicting blind data sets
+```{r}
+pred4 <- predict(back.elim, breastcancer.test.blinded, type = "response")
+class4 <- ifelse(pred3 >= 0.5, 1, 0)
+class4
+```
 
