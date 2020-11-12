@@ -259,6 +259,13 @@ table4 <- table(class4, valid.df$diagnosis)
 # Find which cutoff results in the highest accuracy.
 max_cut <- accuracy[which.max(accuracy[,2]),]
 max_cut
+
+# Display the accuracy plot for cutoffs.
+opt_thresh_plot <- accuracy %>% ggplot(aes(Probability, Accuracy)) +
+  geom_line() +
+  ggtitle("Accuracy by Cutoff Values")
+
+opt_thresh_plot
 ```
 
 
