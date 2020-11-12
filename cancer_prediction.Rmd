@@ -11,6 +11,7 @@ library(dplyr)
 library(corrplot)
 library(pROC)
 library(caret)
+library(knitr)
 ```
 
 
@@ -18,7 +19,7 @@ library(caret)
 The goal of our work is to use data on tissue samples taken from cancerous breast tissue to create a logistic regression model that can be used to accurately predict if a cancer sample is malignant or benign.  Our approach is to first analyze all 10 mean predictor variables to check for extreme values that could influence our models accuracy.  We chose to use mean predictors exclusively because the worst predictors should be included in the mean, but we didn't want to focus on the outliers for each specific observation.  Additionally we did not include the standard error variables to predict whether cancer cells are malignant or benign because they are solely based off the mean variables and would not provide much information on the diagnosis.  To do this, we will plot predictor variables and look for outliers that could skew the variable.  If need be, we can then transform the skewed variables through the use of square roots, logarithms, and reciprocals.  We will also look at the predictor variables to determine if any are highly correlated so that we can  reduce the number of predictor variables to account for overfitting our regression model.  Once we have checked our predictor variables and transformed those where we felt necessary, we will build models and test their predictive capabilities.
 
 # Exploring and Transforming the Data
-The descriptive statistics for each variable mean of interest are displayed below: 
+We first looked into the descriptive statistics for each variable mean and these are displayed in the table below. 
 
 ```{r echo=FALSE}
 # Read in the data file and make diagnosis a factor variable.
@@ -54,9 +55,9 @@ symmetry_plot = plot(breastcancer$symmetry_mean, breastcancer$diagnosis, xlab="S
 smooth_plot = plot(breastcancer$smoothness_mean, breastcancer$diagnosis, xlab="Smoothness Mean", ylab = "Diagnosis", main = "Smoothness Mean against Diagnosis", cex.main = 0.75)
 ```
 
-After analyzing the summaries and the distribution of the variables, we have decided to perform many transformations to account for abnormally distributed data. The transformations on each variable can be seen in the boxplots displayed below.  These transformations were performed because the normal boxplots of the predictors had outliers and/or were highly skewed. Then the data was transformed either by a log, reciprocal, square root, or cube root transformations.  These transformations make the distributions less skewed and contain less outliers, making sure the data is as close to normal as possible.  After performing the transformations, the box plots shown below show less outliers and are less skewed than the originals.  These transformations have a more likely chance of getting better prediction models later when we conduct tests of the data.  Models will also be more accurate with these changes in transformations as there are less outliers to skew the models that we will conduct later.  Overall, these transformations were needed to better fit models and get the data as close to normal as possible. The boxplots shown below help us identify which variables need to be transformed.  When we plot these we are looking for three things.  We are looking to see how many outliers the data has, the spread of the data and if it is consistent throughtout all of plot, and we are also looking to see if the data is heavily skewed in these boxplots as well.  These three factors will help us determine if we need to make the data fit better to a normal curve.
+After analyzing the summaries and the distribution of the variables, we have decided to perform many transformations to account for abnormally distributed data. The transformations on each variable can be seen in the boxplots displayed below.  These transformations were performed because the normal boxplots of the predictors had outliers and/or were highly skewed. Then the data was transformed either by a log, reciprocal, square root, or cube root transformations.  These transformations make the distributions less skewed and contain less outliers, making sure the data is as close to normal as possible.  After performing the transformations, the box plots shown below show less outliers and are less skewed than the originals.  These transformations have a more likely chance of getting better prediction models later when we conduct tests of the data.  Models will also be more accurate with these changes in transformations as there are less outliers to skew the models that we will conduct later.  Overall, these transformations were needed to better fit models and get the data as close to normal as possible. The boxplots shown below help us identify which variables need to be transformed.  When we plot these we are looking for three things.  We are looking to see how many outliers the data has, the spread of the data, and if it is consistent throughout all of plots. We are also looking to see if the data is heavily skewed in these boxplots as well.  These three factors will help us determine if we need to make the data fit better to a normal curve.
 
-```{r fig.dim=c(3,3), include=FALSE}
+```{r echo=FALSE, fig.dim=c(3,3)}
 # Display the side-by-side boxplot for malignant and benign cancer samples.
 breastcancer %>% ggplot(aes(log(area_mean), diagnosis)) + 
   geom_boxplot() + 
@@ -154,9 +155,10 @@ corrplot(breastcancer_corr_worst, type = "upper", tl.cex = 0.5)
 
 
 ## The Logistic Model
-First, we seperated the data into a training and validation set.  This allowed us to build our model in the training set and then test against the validation set.  This is needed to make sure the model is not overfitted. Testing our model on a validation set that wasn't used to create the model allows us to check that the model is actually useful in prediction with new data.
-Next, we created a model for prediction with all of the variables used in the model.  We then created contigency tables and found the sensitivity, specificity, and the overall accuracy of the model.
-```{r}
+First, we separated the data into a training and validation set.  This allowed us to build our model in the training set and then test against the validation set.  This is needed to make sure the model is not overfitted. Testing our model on a validation set that wasn't used to create the model allows us to check that the model is actually useful in prediction with new data.
+
+Next, we created a model for prediction with all of the variables used in the model.  We then created contingency tables and found the sensitivity, specificity, and the overall accuracy of the model.
+```{r include=FALSE}
 # Creating data frame with only variables of interest
 breastcancer1 <- breastcancer[,-c(1,13:32)]
 
@@ -170,26 +172,28 @@ valid.df = breastcancer1[-train.index,]
 
 # Building model with all predictors
 modALL <- glm(diagnosis ~ ., family = binomial, data = train.df)
+summary(modALL)
 ```
+$logit(diagnosis) = -64.5193 - 56.3442(radius_mean) + 8.4046(texture_mean) - 39.5438(perimeter_mean) + 54.4353(area_mean) + 110.7030(smoothness_mean) - 0.2102(compactness_mean) + 14.3138(concavity_mean) + 15.9012(concave.points_mean) + 2.9535(symmetry_mean) + 0.1181(fractal_dimension_mean)$
 
-```{r}
+```{r echo=FALSE}
 # Find the predicted class of the validation data and create contingency table.
 pred <- predict(modALL, valid.df, type = "response")
 class <- ifelse(pred >= 0.5, 1, 0)
 table <- table(class, valid.df$diagnosis)
 
 # Find the sensitivity, specificity, and overall accuracy.
-paste("Senstivity: ")
+paste("The senstivity for this model on the validation data is: ")
 table[2,2]/sum(table[,2])
-paste("Specificity: ")
+paste("The specificity for this model on the validation data is: ")
 table[1,1]/sum(table[,1])
-paste("Overall accuracy: ")
+paste("The overall accuracy for this model on the validation data is: ")
 (table[1,1] + table[2,2]) / length(class)
 ```
 
 ## Model Selection
-After making our model utilizing all predictors, we made two other models which were forward and backward stepwise regression models.  We then created contigency tables and found the sensitivity, specificity, and the overall accuracy for both of the models.  Overall, we ended choosing the backward stepwise regression model as it had slightly better accuracy while also using fewer predictor variables.
-```{r}
+After making our model utilizing all predictors, we made two other models using both forward and backward stepwise regression to select the most significant predictors.  We then created contingency tables and found the sensitivity, specificity, and the overall accuracy for both of the models.  Overall, we ended choosing the backward stepwise regression model as it had slightly better accuracy while also using fewer predictor variables.
+```{r include=FALSE}
 # Back step
 back.elim <- step(modALL, direction = "backward", trace = 0)
 summary(back.elim)
@@ -200,41 +204,44 @@ forward.elim <- step(null, scope = list(lower = null, upper = modALL), direction
 summary(forward.elim)
 ```
 
-### Back
-```{r}
-# Find the predicted class of the validation data and create contingency table.
-pred2 <- predict(back.elim, valid.df, type = "response")
-class2 <- ifelse(pred2 >= 0.5, 1, 0)
-table2 <- table(class2, valid.df$diagnosis)
-
-# Find the sensitivity, specificity, and overall accuracy.
-paste("Senstivity: ")
-table2[2,2]/sum(table2[,2])
-paste("Specificity: ")
-table2[1,1]/sum(table2[,1])
-paste("Overall accuracy: ")
-(table2[1,1] + table2[2,2]) / length(class2)
-```
-
-### Forward
-```{r}
+```{r echo=FALSE}
 # Find the predicted class of the validation data and create contingency table.
 pred3 <- predict(forward.elim, valid.df, type = "response")
 class3 <- ifelse(pred3 >= 0.5, 1, 0)
 table3 <- table(class3, valid.df$diagnosis)
 
 # Find the sensitivity, specificity, and overall accuracy.
-paste("Senstivity: ")
+paste("The senstivity using the forward selection model on the validation data is: ")
 table3[2,2]/sum(table3[,2])
-paste("Specificity: ")
+paste("The specificity using the forward selection model on the validation data is: ")
 table3[1,1]/sum(table3[,1])
-paste("Overall accuracy: ")
+paste("The overall accuracy using the forward selection model on the validation data is: ")
 (table3[1,1] + table3[2,2]) / length(class3)
 ```
 
+```{r echo=FALSE}
+# Find the predicted class of the validation data and create contingency table.
+pred2 <- predict(back.elim, valid.df, type = "response")
+class2 <- ifelse(pred2 >= 0.5, 1, 0)
+table2 <- table(class2, valid.df$diagnosis)
+
+# Find the sensitivity, specificity, and overall accuracy.
+paste("The senstivity using the backward selection model on the validation data is: ")
+table2[2,2]/sum(table2[,2])
+paste("The specificity using the backward selection model on the validation data is: ")
+table2[1,1]/sum(table2[,1])
+paste("The overall accuracy using the forward selection model on the validation data is: ")
+(table2[1,1] + table2[2,2]) / length(class2)
+```
+
+Based off of this we find that the best model selected using the backward stepwise regression results in the highest overall accuracy. Its specificity has increased while its sensitivity has remained the same. This model is:
+
+$logit(diagnosis) = -17.86 + 8.50(texture_mean) - 63.64(perimeter_mean) + 39.94(area_mean) + 140.96(smoothness_mean) + 22.92(concavity_mean)$
+
 ## Optimal Threshold
-We created an accuracy plot for all varying classifiction thresholds and it showed that thresholds between .43 and .53 have the same accuracy and also the highest accuracy among all thresholds.  We ended up choosing .5 as our threshold because it is in the middle of all of the probabilities and it still had the highest accuracy for the data.
-```{r}
+We created an accuracy plot for all varying classification thresholds and it showed that thresholds between .43 and .53 have the same accuracy and also the highest accuracy among all thresholds.  We ended up choosing 0.5 as our threshold because it was one of the thresholds that resulted in the highest accuracy for the data. Additionally, 0.5 is the middle of all probabilities and if we were to decrease this classification threshold it would result in more samples being classified as malignant even if they are benign.
+
+```{r echo=FALSE, fig.dim=c(4,4)}
 # Create values from 0.01 to 0.99.
 cut <- seq(from = .01, to = .99, by = .01)
 
@@ -250,10 +257,6 @@ table4 <- table(class4, valid.df$diagnosis)
   accuracy[i,2] <- (table4[1,1] + table4[2,2]) / length(class4)
 }
 
-# Find which cutoff results in the highest accuracy.
-max_cut <- accuracy[which.max(accuracy[,2]),]
-max_cut
-
 # Display the accuracy plot for cutoffs.
 opt_thresh_plot <- accuracy %>% ggplot(aes(Probability, Accuracy)) +
   geom_line() +
@@ -262,9 +265,14 @@ opt_thresh_plot <- accuracy %>% ggplot(aes(Probability, Accuracy)) +
 opt_thresh_plot
 ```
 
+# Results Summary
+In conclusion, the backwards elimination model is the best model for predicting whether a cancerous breast tissue is malignant or benign.  This comes from how the backwards elimination model has the highest accuracy out of all three models tested and also has the lowest amount of predictors in any of the models. The accuracy of this model was 97.4% and the classification threshold we choose was at 0.5. This model also has a sensitivity of 95.2% and a specificity of 98.6%. Overall, the backwards elimination model does the best job in all categories of predicting cancerous breast tissue.
 
-#Predicting Blind Data Sets
-```{r}
+
+
+```{r include=FALSE}
+## Accuracy test on new data.
+
 # Read in the blind data.
 breastcancer_blind <- read.csv("breastcancer-test-blinded.csv")
 
@@ -274,16 +282,13 @@ breastcancer_blind <- breastcancer_blind %>% mutate(area_mean = log(area_mean), 
 # Find predicted class on the blind data.
 pred5 <- predict(back.elim, breastcancer_blind, type = "response")
 class5 <- ifelse(pred5 >= 0.5, 1, 0)
-```
 
-#Final Diagnosis Table for Blind Data
-```{r}
+# Put the diagnosis and id into one table.
 Diagnosis.Table = breastcancer_blind[1]
 Diagnosis = class5
 Diagnosis = ifelse(Diagnosis == 1, "M", "B")
-
 Diagnosis.Table = cbind(Diagnosis.Table, Diagnosis)
+
+# Convert the table to a csv file.
 write.csv(Diagnosis.Table, "Diagnosis.Table.csv")
 ```
-# Results Summary
-In conclusion, the backwards elimation model is the best model for predicing whether a cancerous breast tissue is malignant or benign.  This comes from how the backwards elimanation model has the highest accuracy of all three models tested and also has the lowest amount of predictors in any of the models. The accuracy of this model was 97.4% and the classification threshold we choose was at 0.5. This model also has a sensivity of 95.2% and a specifiity of 98.6%. Overall, the backwards elimanation model does the best job in all categories of predicting cancerous breast tissue.
